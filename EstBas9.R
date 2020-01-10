@@ -515,6 +515,8 @@ reg_resist<-function(tab,plot=TRUE){
 ##################          IMPORTACAO DOS DADOS        ########################
 ################################################################################
 
+load("dados.RData")
+
 cd_poluicao<-read.table("cd-poluicao.csv",header=TRUE,skip=8,sep=";",dec=",")
 cd_brasil<-read.table("cd-brasil.csv",header=TRUE,skip=7,sep=";")
 cd_temperaturas<-read.table("cd-temperaturas.csv",header=TRUE,skip=4,sep=";",dec=",") # Leitura dos dados
@@ -523,17 +525,65 @@ cd_mercado <- read.table("cd-mercado.csv",header=TRUE,skip=4,sep=";",dec=",") # 
 cd_veiculos <- read.table("cd-veiculos.csv",header=TRUE,skip=4,sep=";",dec=",") # Leitura dos dados
 cd_municipios<-read.table("cd-municipios.csv",header=TRUE,skip=4,sep=";",dec=",")
 tab2_1<-read.table("tabela2_1.csv", dec=",", sep=";",header=TRUE)
+
+
+names(tab2_1)
+summary(tab2_1$salario)
+
+# Calcula a tabela de frequências absolutas e armazena o resultado em 'mytab'
+ni<-table(tab2_1$grau_instrucao) 
+# Tabela de frequências relativas (f_i)
+fi<-prop.table(ni)
+# Porcentagem (100 f_i)
+p_fi<-100*prop.table(ni) 
+
+# Adiciona linhas de total
+ni<-c(ni,sum(ni)) 
+fi<-c(fi,sum(fi))
+p_fi<-c(p_fi,sum(p_fi))
+names(ni)[4]<-"Total"
+tab2_2<-cbind(ni,fi=round(fi,digits=2),p_fi=round(p_fi,digits=2))
+tab2_2
+
+#quebras de linha apenas ilustrativas para facilitar a leitura
+tab2_3<-as.data.frame(
+  t(rbind(
+    ni=c(650,1020,330,2000),
+    p_fi=c(32.5,51,16.5,1)
+  ))
+  ,row.names =c("Fundamental","Médio","Superior","Total")
+)
+tab2_3
+
+
+ni<-table(cut(tab2_1$salario, breaks = seq(4,24,by=4),right=FALSE)) # Frequencias por categorias
+tab2_4 <- rbind(ni, p_fi = 100*prop.table(ni)) # Frequencias relativas em %
+#quebras de linha apenas ilustrativas para facilitar a leitura
+tab2_4 <- as.data.frame(
+  t(cbind(
+    tab2_4,
+    c(sum(tab2_4[1,]),sum(tab2_4[2,])
+    ))),row.names =c(colnames(tab2_4),"Total")) #Construcao da tabela
+tab2_4<-transform(tab2_4,p_fi=round(p_fi,digits=2))
+tab2_4
+
+
 attach(tab2_1)
+
 dureza<-c(53,70.2,84.3,69.5,77.8,87.5,53.4,82.5,67.3,54.1,
           70.5,71.4,95.4,51.1,74.4,55.7,63.5,85.8,53.5,64.3,
           82.7,78.5,55.7,69.1,72.3,59.5,55.3,73  ,52.4,50.7)
+
 munic<-cd_municipios[order(cd_municipios$populacao,decreasing = TRUE),]
+
 dados.tab4_7<-data.frame(rbind(
   matrix(rep(c("1.Masculino","1.F?sica"),times=100),ncol=2,byrow=T),
   matrix(rep(c("2.Feminino","1.F?sica"),times=20),ncol=2,byrow=T),
   matrix(rep(c("1.Masculino","2.Ci?ncias Sociais"),times=40),ncol=2,byrow=T),
   matrix(rep(c("2.Feminino","2.Ci?ncias Sociais"),times=40),ncol=2,byrow=T)))
+
 colnames(dados.tab4_7)<-c("sexo","curso")
+
 dados.tab4_8<-data.frame(rbind(
   matrix(rep(c("1.Consumidor","1.S?o Paulo"),times=214),ncol=2,byrow=T),
   matrix(rep(c("1.Consumidor","2.Paran?"),times=51),ncol=2,byrow=T),
@@ -547,7 +597,9 @@ dados.tab4_8<-data.frame(rbind(
   matrix(rep(c("4.Outras","1.S?o Paulo"),times=119),ncol=2,byrow=T),
   matrix(rep(c("4.Outras","2.Paran?"),times=22),ncol=2,byrow=T),
   matrix(rep(c("4.Outras","3.Rio G. do Sul"),times=48),ncol=2,byrow=T)))
+
 colnames(dados.tab4_8)<-c("tipo_de_cooperativa","estado")
+
 dados.ex4_4<-data.frame(agente=c("A","B","C","D","E","F","G","H","I","J"),
                        anos_servico=c(2,3,4,5,4,6,7,8,8,10),
                        n_clientes=c(48,50,56,52,43,60,62,58,64,72))
