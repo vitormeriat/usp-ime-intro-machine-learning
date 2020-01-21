@@ -63,7 +63,7 @@ def gradientDescent2(X, y, w, alpha, num_iters):
 
 def geraDados2DfronteiraNonLinear(N=100):
     # draw N random points in the [0,1]x[0,1] square
-
+    
     x1 = np.random.rand(N)
     x2 = np.random.rand(N)
     X = np.vstack(zip(np.ones(N),x1, x2))
@@ -73,8 +73,8 @@ def geraDados2DfronteiraNonLinear(N=100):
     y = np.array([1 if np.cos(2*np.pi*X[i,1]) / 2 + 0.5 > X[i,2] \
                   else 0 for i in range(N)])
     print("Shape do y: ", y.shape)
-
-    p = plt.figure(figsize=(12,5))
+    
+    p = plt.figure(figsize=(18,8))
     p1 = p.add_subplot(121)
     p1.plot(x1,x2,'o')
 
